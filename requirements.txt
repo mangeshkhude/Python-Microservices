@@ -3,3 +3,4 @@ connexion
 Flask-Injector
 fastavro
 flask-restful
+pymysql

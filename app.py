@@ -1,12 +1,64 @@
 from flask import Flask, request, jsonify
 from flask_restful import reqparse
+import json
 
 app = Flask(__name__)
 users_seen = {}
-
 @app.route('/GetUserService/<limit>', methods=['POST'])
 def get_user_service(limit):
-   return "Limit is : %s" %limit
+
+   response_object = """
+   [
+  {
+	"UserEmailID": "monika.agrawal@infobeans.com",
+	"UserToken": "fG0vxD2+uKn2+EeDIpDruHMMavDa/245N",
+	"RewardPoints": 90,
+	"TestDate": "datetime.datetime(2019, 2, 19, 0, 0)",
+	"TestDuration": 60,
+	"QuestionsCount": 10,
+	"CorrectAnswersCount": 9,
+	"InCorrectAnswersCount": 1
+  }, 
+  {
+	"UserEmailID": "monika.agrawal@infobeans.com",
+	"UserToken": "fG0vxD2+uKn2+EeDIpDruHMMavDa/245N",
+	"RewardPoints": 60,
+	"TestDate": "datetime.datetime(2019, 2, 19, 0, 0)",
+	"TestDuration": 60,
+	"QuestionsCount": 10,
+	"CorrectAnswersCount": 6,
+	"InCorrectAnswersCount": 4
+  }, 
+  {
+	"UserEmailID": "monika.agrawal@infobeans.com",
+	"UserToken": "fG0vxD2+uKn2+EeDIpDruHMMavDa/245N",
+	"RewardPoints": 40,
+	"TestDate": "datetime.datetime(2019, 2, 19, 0, 0)",
+	"TestDuration": 60,
+	"QuestionsCount": 10,
+	"CorrectAnswersCount": 4,
+	"InCorrectAnswersCount": 1
+  }
+]
+   """
+
+   parser = reqparse.RequestParser()
+   parser.add_argument('UserEmailID')
+   parser.add_argument('UserToken')
+   parser.add_argument('NumberOfRecords')
+   args = parser.parse_args()
+
+   # Transform json input to python objects
+   input_dict = json.loads(response_object)
+
+   # Filter python objects with list comprehensions
+   output_dict = [x for x in input_dict if x['UserEmailID'] == args['UserEmailID']]
+
+   # Transform python object back into json
+   output_json = jsonify(output_dict)
+
+   # Show json
+   return output_json
 
 # http://172.16.20.87:5000/AddUserResult/
 @app.route('/api/user/AddUserScore/', methods=['POST'])
@@ -23,14 +75,7 @@ def add_user_score():
     args = parser.parse_args()
     my_dict = {
        'status': True,
-       'UserEmailID': '{}'.format(args['UserEmailID']),
-       'UserToken': '{}'.format(args['UserToken']),
-       'TestDuration': '{}'.format(args['TestDuration']),
-       'QuestionsCount': '{}'.format(args['QuestionsCount']),
-       'RewardPoints': '{}'.format(args['RewardPoints']),
-       'TestDate': '{}'.format(args['TestDate']),
-       'CorrectAnswersCount': '{}'.format(args['CorrectAnswersCount']),
-       'InCorrectAnswersCount': '{}'.format(args['InCorrectAnswersCount'])
+        'message': 'success'
     }
     return jsonify(my_dict)
 
